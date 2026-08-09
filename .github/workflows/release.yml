@@ -7,6 +7,7 @@ on:
 
 jobs:
   publish:
+    name: Test and publish
     runs-on: ubuntu-latest
 
     steps:
@@ -23,8 +24,8 @@ jobs:
           CARGO_VERSION="$(cargo metadata --no-deps --format-version 1 \
             | python3 -c 'import json,sys; print(json.load(sys.stdin)["packages"][0]["version"])')"
 
-          echo "Git tag:        $TAG_VERSION"
-          echo "Cargo version:  $CARGO_VERSION"
+          echo "Git tag:       $TAG_VERSION"
+          echo "Cargo version: $CARGO_VERSION"
 
           if [ "$TAG_VERSION" != "$CARGO_VERSION" ]; then
             echo "ERROR: Git tag and Cargo.toml version do not match."
@@ -40,7 +41,19 @@ jobs:
       - name: Package
         run: cargo package
 
-      - name: Publish to crates.io
-        run: cargo publish
+      - name: Check crates.io token
+        shell: bash
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+        run: |
+          if [ -z "$CARGO_REGISTRY_TOKEN" ]; then
+            echo "ERROR: CRATES_IO_TOKEN is empty or unavailable."
+            exit 1
+          fi
+
+          echo "CRATES_IO_TOKEN is available."
+
+      - name: Publish to crates.io
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+        run: cargo publish
