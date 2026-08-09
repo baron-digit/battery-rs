@@ -1,6 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![forbid(unsafe_code)]
-#![warn(missing_docs)]
+//#![warn(missing_docs)]
 
 //! `battery-rs` is an open framework for battery software engineering.
 //!
@@ -20,4 +20,7 @@ pub mod platform;
 /// Replay, metrics and validation utilities.
 pub mod validation;
 
-pub use crate::core::{Algorithm, Measurement, State};
+pub use crate::core::{
+    BatteryState, Capacity, Current, Energy, Estimator, Measurement, Power, Resistance,
+    StateOfCharge, StateOfHealth, Temperature, TimeDelta, Timestamp, Voltage,
+};

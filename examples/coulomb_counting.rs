@@ -1,17 +1,27 @@
+use battery_rs::algorithms::soc::coulomb_counter::CoulombCounter;
 use battery_rs::{
-    Algorithm, Measurement,
-    algorithms::{CoulombCounter, CoulombCounterError},
+    Capacity, Current, Estimator, Measurement, StateOfCharge, Temperature, Timestamp, Voltage,
 };
 
-fn main() -> Result<(), CoulombCounterError> {
-    let mut estimator = CoulombCounter::new(100.0, 0.80)?;
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut estimator = CoulombCounter::new(
+        Capacity::from_ampere_hours(100.0).unwrap(),
+        StateOfCharge::from_fraction(0.80).unwrap(),
+    )?;
 
-    for second in 1..=10 {
-        let measurement = Measurement::new(second as u64, -10.0, 400.0, 25.0);
+    for second in 0..=3600 {
+        let measurement = Measurement::new(
+            Timestamp::from_micros(second * 1_000_000),
+            Voltage::from_volts(400.0),
+            Current::from_amperes(10.0),
+            Temperature::from_celsius(25.0),
+        );
 
         let state = estimator.update(&measurement)?;
 
-        println!("t={second}s, SOC={:.6}", state.state_of_charge);
+        if second % 600 == 0 {
+            println!("t={}s SOC={:.2}%", second, state.soc.unwrap().as_percent());
+        }
     }
 
     Ok(())

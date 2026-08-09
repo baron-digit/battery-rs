@@ -1,5 +1,5 @@
 //! Reusable battery algorithms.
 
-mod coulomb_counter;
+pub mod soc;
 
-pub use coulomb_counter::{CoulombCounter, CoulombCounterError};
+pub use soc::coulomb_counter::{CoulombCounter, CoulombCounterError};

@@ -1,9 +1,9 @@
-//! Core domain types and framework traits.
+pub mod estimator;
+pub mod measurement;
+pub mod state;
+pub mod types;
 
-mod algorithm;
-mod measurement;
-mod state;
-
-pub use algorithm::Algorithm;
+pub use estimator::Estimator;
 pub use measurement::Measurement;
-pub use state::State;
+pub use state::BatteryState;
+pub use types::*;
